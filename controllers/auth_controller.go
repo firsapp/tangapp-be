@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"tangapp-be/config"
 	"tangapp-be/utils"
 
 	"github.com/gin-gonic/gin"
@@ -19,5 +20,15 @@ func GoogleAuthCallback(c *gin.Context) {
 	}
 
 	//  Generate JWT
-	token, err := uti
+	token, err := utils.GenerateJWT(user.UserID, user.Email, user.Name, config.JWTSecret)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not generate token"})
+		return
+	}
+
+	// Send respond in JWT & user details
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
+		"user":  gin.H{"email": user.Email, "name": user.Name},
+	})
 }
