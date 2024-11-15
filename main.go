@@ -2,6 +2,7 @@ package main
 
 import (
 	"tangapp-be/config"
+	"tangapp-be/routes"
 
 	"github.com/gin-gonic/gin"
 )
@@ -12,8 +13,7 @@ func main() {
 
 	r := gin.Default() // Gin router
 
-}
+	routes.SetupRoutes(r)
 
-func errorResponse(err error) gin.H {
-	return gin.H{"error": err.Error()}
+	r.Run(":8080")
 }
