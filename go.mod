@@ -2,7 +2,10 @@ module tangapp-be
 
 go 1.22.4
 
-require github.com/markbates/goth v1.80.0
+require (
+	github.com/joho/godotenv v1.5.1
+	github.com/markbates/goth v1.80.0
+)
 
 require (
 	cloud.google.com/go/compute v1.20.1 // indirect
