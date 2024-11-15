@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"tangapp-be/config"
 	"tangapp-be/utils"
@@ -27,8 +28,10 @@ func GoogleAuthCallback(c *gin.Context) {
 	}
 
 	// Send respond in JWT & user details
-	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-		"user":  gin.H{"email": user.Email, "name": user.Name},
-	})
+	// c.JSON(http.StatusOK, gin.H{
+	// 	"token": token,
+	// 	"user":  gin.H{"email": user.Email, "name": user.Name},
+	// })
+
+	c.Redirect(http.StatusFound, fmt.Sprintf("http://localhost:5500/index.html?token=%s", token))
 }
