@@ -9,9 +9,11 @@ import (
 	"github.com/markbates/goth/gothic"
 )
 
+var baseUri = "/api"
+
 func SetupRoutes(r *gin.Engine) {
 	// Google Oauth routes
-	r.GET("/auth/:provider", func(c *gin.Context) {
+	r.GET(baseUri+"/auth/:provider", func(c *gin.Context) {
 		gothic.GetProviderName = func(req *http.Request) (string, error) {
 			return "google", nil // specify the provider (e.g., Google)
 		}
