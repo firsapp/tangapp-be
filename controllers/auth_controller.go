@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"tangapp-be/config"
 	"tangapp-be/utils"
@@ -28,6 +27,8 @@ func GoogleAuthCallback(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusFound, fmt.Sprintf("http://localhost:5173/loginsuccess?token=%s", token))
+	// Redirect to frontend with token as a query parameter
+	frontendCallbackURL := "http://localhost:5173/auth-callback" // Adjust as needed
+	c.Redirect(http.StatusFound, frontendCallbackURL+"?token="+token)
 
 }
