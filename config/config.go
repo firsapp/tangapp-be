@@ -2,34 +2,31 @@ package config
 
 import (
 	"log"
-	"os"
 
-	"github.com/joho/godotenv"
-	"github.com/markbates/goth"
-	"github.com/markbates/goth/providers/google"
+	"github.com/spf13/viper"
 )
 
 var JWTSecret []byte
 
-func LoadConfig() {
-	// Loads JWT secret from .env
-	err := godotenv.Load(".env")
+type Config struct {
+	JWTSecret          string `mapstructure:"JWT_SECRET"`
+	DBCredential       string `mapstructure:"DB_CREDENTIAL"`
+	GoogleClientID     string `mapstructure:"GOOGLE_CLIENT_ID"`
+	GoogleClientSecret string `mapstructure:"GOOGLE_CLIENT_SECRET"`
+}
+
+func LoadConfig(path string) (config Config, err error) {
+	viper.AddConfigPath(path)
+	viper.SetConfigName("app")
+	viper.SetConfigType("env")
+
+	viper.AutomaticEnv()
+
+	err = viper.ReadInConfig()
 	if err != nil {
-		log.Fatal("fatal : unable to load .env")
+		log.Fatal("fatal: unable to load configurations")
 	}
 
-	JWTSecret = []byte(os.Getenv("JWT_SECRET"))
-	if len(JWTSecret) == 0 {
-		log.Fatal("fatal : unable to load jwt secret")
-	}
-
-	callbackUri := "http://localhost:8080/auth/google/callback"
-	// Initialize google oauth credentials
-	goth.UseProviders(
-		google.New(
-			os.Getenv("GOOGLE_CLIENT_ID"),
-			os.Getenv("GOOGLE_CLIENT_SECRET"),
-			callbackUri, "email", "profile",
-		),
-	)
+	err = viper.Unmarshal(&config)
+	return
 }
