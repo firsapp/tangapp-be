@@ -20,6 +20,8 @@ func GoogleAuthCallback(c *gin.Context) {
 		return
 	}
 
+	// Check if user exists
+
 	// Generate JWT
 	token, err := utils.GenerateJWT(user.UserID, user.Email, user.Name, config.JWTSecret)
 	if err != nil {

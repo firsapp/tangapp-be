@@ -24,7 +24,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok { // Validate if JWT signing method is 256, 384, or 512
 				return nil, fmt.Errorf("wrong JWT signing method")
 			}
-			return config.JWTSecret, nil
+			return []byte(config.JWTSecret), nil
 		})
 
 		if err != nil {
