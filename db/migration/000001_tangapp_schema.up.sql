@@ -1,25 +1,28 @@
-  CREATE TABLE "users" (
-  "id" int PRIMARY KEY,
-  "name" varchar,
-  "title" varchar,
-  "created_at" timestamp
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE "users" (
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "username" varchar,
+  "email" varchar NOT NULL,
+  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
 );
 
 CREATE TABLE "events" (
-  "id" int PRIMARY KEY,
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "title" varchar,
   "description" text,
-  "status" varchar,
-  "total_amount" int,
+  "status" varchar NOT NULL,
+  "total_amount" int NOT NULL,
   "date_event" timestamp,
-  "created_by" int,
-  "created_at" timestamp,
-  "updated_at" timestamp
+  "created_by" uuid NOT NULL,
+  "can_edit" bool NOT NULL DEFAULT true,
+  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
+  "updated_at" timestamp DEFAULT (CURRENT_TIMESTAMP)
 );
 
 CREATE TABLE "event_purchase_details" (
-  "id" int PRIMARY KEY,
-  "event_id" int,
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "event_id" uuid NOT NULL,
   "name" varchar,
   "qty" int,
   "each_price" int,
@@ -28,23 +31,23 @@ CREATE TABLE "event_purchase_details" (
 );
 
 CREATE TABLE "event_member_details" (
-  "id" int PRIMARY KEY,
-  "event_id" int,
-  "user_id" int,
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "event_id" uuid NOT NULL,
+  "user_id" uuid NOT NULL,
   "bill" int,
   "paid" int,
   "compensation" int,
   "notes" text,
-  "done" bool
+  "done" bool NOT NULL DEFAULT false
 );
 
 CREATE TABLE "payment_history" (
-  "id" int PRIMARY KEY,
-  "event_member_details_id" int,
-  "to_user_id" int,
-  "nominal" int,
+  "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
+  "event_member_details_id" uuid NOT NULL,
+  "to_user_id" uuid NOT NULL,
+  "nominal" int NOT NULL,
   "description" text,
-  "created_at" timestamp
+  "created_at" timestamp NOT NULL
 );
 
 ALTER TABLE "event_member_details" ADD FOREIGN KEY ("event_id") REFERENCES "events" ("id");

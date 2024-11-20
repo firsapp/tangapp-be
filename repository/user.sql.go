@@ -8,49 +8,73 @@ package repository
 import (
 	"context"
 	"database/sql"
+
+	"github.com/google/uuid"
 )
 
-const createAccount = `-- name: CreateAccount :one
+const addUser = `-- name: AddUser :one
 INSERT INTO users (
-  name,
-  title,
-  created_at
+  username,
+  email
 ) VALUES (
-  $1, $2, $3
+  $1, $2
 )
-RETURNING id, name, title, created_at
+RETURNING id, username, email, created_at
 `
 
-type CreateAccountParams struct {
-	Name      sql.NullString `json:"name"`
-	Title     sql.NullString `json:"title"`
-	CreatedAt sql.NullTime   `json:"created_at"`
+type AddUserParams struct {
+	Username sql.NullString `json:"username"`
+	Email    string         `json:"email"`
 }
 
-func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createAccount, arg.Name, arg.Title, arg.CreatedAt)
+func (q *Queries) AddUser(ctx context.Context, arg AddUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, addUser, arg.Username, arg.Email)
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
-		&i.Title,
+		&i.Username,
+		&i.Email,
 		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const getAccount = `-- name: GetAccount :one
-SELECT id, name, title, created_at FROM users
+const getUser = `-- name: GetUser :one
+SELECT id, username, email, created_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
-func (q *Queries) GetAccount(ctx context.Context, id int32) (User, error) {
-	row := q.db.QueryRowContext(ctx, getAccount, id)
+func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUser, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
-		&i.Name,
-		&i.Title,
+		&i.Username,
+		&i.Email,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const updateUser = `-- name: UpdateUser :one
+UPDATE users
+SET username = $2
+WHERE id = $1
+RETURNING id, username, email, created_at
+`
+
+type UpdateUserParams struct {
+	ID       uuid.UUID      `json:"id"`
+	Username sql.NullString `json:"username"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUser, arg.ID, arg.Username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
 		&i.CreatedAt,
 	)
 	return i, err

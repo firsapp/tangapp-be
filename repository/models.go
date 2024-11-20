@@ -6,34 +6,38 @@ package repository
 
 import (
 	"database/sql"
+	"time"
+
+	"github.com/google/uuid"
 )
 
 type Event struct {
-	ID          int32          `json:"id"`
+	ID          uuid.UUID      `json:"id"`
 	Title       sql.NullString `json:"title"`
 	Description sql.NullString `json:"description"`
-	Status      sql.NullString `json:"status"`
-	TotalAmount sql.NullInt32  `json:"total_amount"`
+	Status      string         `json:"status"`
+	TotalAmount int32          `json:"total_amount"`
 	DateEvent   sql.NullTime   `json:"date_event"`
-	CreatedBy   sql.NullInt32  `json:"created_by"`
-	CreatedAt   sql.NullTime   `json:"created_at"`
+	CreatedBy   uuid.UUID      `json:"created_by"`
+	CanEdit     bool           `json:"can_edit"`
+	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   sql.NullTime   `json:"updated_at"`
 }
 
 type EventMemberDetail struct {
-	ID           int32          `json:"id"`
-	EventID      sql.NullInt32  `json:"event_id"`
-	UserID       sql.NullInt32  `json:"user_id"`
+	ID           uuid.UUID      `json:"id"`
+	EventID      uuid.UUID      `json:"event_id"`
+	UserID       uuid.UUID      `json:"user_id"`
 	Bill         sql.NullInt32  `json:"bill"`
 	Paid         sql.NullInt32  `json:"paid"`
 	Compensation sql.NullInt32  `json:"compensation"`
 	Notes        sql.NullString `json:"notes"`
-	Done         sql.NullBool   `json:"done"`
+	Done         bool           `json:"done"`
 }
 
 type EventPurchaseDetail struct {
-	ID         int32          `json:"id"`
-	EventID    sql.NullInt32  `json:"event_id"`
+	ID         uuid.UUID      `json:"id"`
+	EventID    uuid.UUID      `json:"event_id"`
 	Name       sql.NullString `json:"name"`
 	Qty        sql.NullInt32  `json:"qty"`
 	EachPrice  sql.NullInt32  `json:"each_price"`
@@ -42,17 +46,17 @@ type EventPurchaseDetail struct {
 }
 
 type PaymentHistory struct {
-	ID                   int32          `json:"id"`
-	EventMemberDetailsID sql.NullInt32  `json:"event_member_details_id"`
-	ToUserID             sql.NullInt32  `json:"to_user_id"`
-	Nominal              sql.NullInt32  `json:"nominal"`
+	ID                   uuid.UUID      `json:"id"`
+	EventMemberDetailsID uuid.UUID      `json:"event_member_details_id"`
+	ToUserID             uuid.UUID      `json:"to_user_id"`
+	Nominal              int32          `json:"nominal"`
 	Description          sql.NullString `json:"description"`
-	CreatedAt            sql.NullTime   `json:"created_at"`
+	CreatedAt            time.Time      `json:"created_at"`
 }
 
 type User struct {
-	ID        int32          `json:"id"`
-	Name      sql.NullString `json:"name"`
-	Title     sql.NullString `json:"title"`
-	CreatedAt sql.NullTime   `json:"created_at"`
+	ID        uuid.UUID      `json:"id"`
+	Username  sql.NullString `json:"username"`
+	Email     string         `json:"email"`
+	CreatedAt time.Time      `json:"created_at"`
 }
