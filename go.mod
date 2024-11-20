@@ -3,6 +3,7 @@ module tangapp-be
 go 1.22.4
 
 require (
+	github.com/google/uuid v1.4.0
 	github.com/lib/pq v1.10.2
 	github.com/markbates/goth v1.80.0
 	github.com/spf13/viper v1.19.0
