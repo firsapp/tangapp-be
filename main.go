@@ -19,5 +19,5 @@ func main() {
 
 	routes.SetupRoutes(r)
 
-	r.Run("127.0.0.1:8080")
+	r.Run(config.BaseUrl)
 }

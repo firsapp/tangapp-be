@@ -6,7 +6,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var JWTSecret []byte
+var (
+	JWTSecret []byte
+	BaseUrl   = "127.0.0.1:7878"
+)
 
 type Config struct {
 	JWTSecret          string `mapstructure:"JWT_SECRET"`
@@ -15,6 +18,7 @@ type Config struct {
 	GoogleClientSecret string `mapstructure:"GOOGLE_CLIENT_SECRET"`
 }
 
+// LoadConfig used for load any env or config file and return a config struct variable
 func LoadConfig(path string) (config Config, err error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigName("app")
@@ -28,5 +32,6 @@ func LoadConfig(path string) (config Config, err error) {
 	}
 
 	err = viper.Unmarshal(&config)
+
 	return
 }

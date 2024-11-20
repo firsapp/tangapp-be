@@ -9,7 +9,7 @@ import (
 	"github.com/markbates/goth/gothic"
 )
 
-var baseUri = "/api"
+var baseUri = "/api/v1"
 
 func SetupRoutes(r *gin.Engine) {
 	// Google Oauth routes
