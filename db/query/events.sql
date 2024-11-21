@@ -21,7 +21,12 @@ SELECT * FROM events
 WHERE created_by = $1;
 
 -- name: UpdateEvent :one
--- UPDATE events
--- SET username = $2
--- WHERE id = $1
--- RETURNING *;
+UPDATE events
+SET 
+  title = $2,
+  description = $3,
+  status = $4,
+  total_amount = $5,
+  date_event = $6
+WHERE id = $1 AND can_edit = true
+RETURNING *;

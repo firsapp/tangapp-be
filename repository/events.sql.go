@@ -124,3 +124,49 @@ func (q *Queries) GetEventByUser(ctx context.Context, createdBy uuid.UUID) ([]Ev
 	}
 	return items, nil
 }
+
+const updateEvent = `-- name: UpdateEvent :one
+UPDATE events
+SET 
+  title = $2,
+  description = $3,
+  status = $4,
+  total_amount = $5,
+  date_event = $6
+WHERE id = $1 AND can_edit = true
+RETURNING id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at
+`
+
+type UpdateEventParams struct {
+	ID          uuid.UUID      `json:"id"`
+	Title       sql.NullString `json:"title"`
+	Description sql.NullString `json:"description"`
+	Status      string         `json:"status"`
+	TotalAmount int32          `json:"total_amount"`
+	DateEvent   sql.NullTime   `json:"date_event"`
+}
+
+func (q *Queries) UpdateEvent(ctx context.Context, arg UpdateEventParams) (Event, error) {
+	row := q.db.QueryRowContext(ctx, updateEvent,
+		arg.ID,
+		arg.Title,
+		arg.Description,
+		arg.Status,
+		arg.TotalAmount,
+		arg.DateEvent,
+	)
+	var i Event
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.Status,
+		&i.TotalAmount,
+		&i.DateEvent,
+		&i.CreatedBy,
+		&i.CanEdit,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
