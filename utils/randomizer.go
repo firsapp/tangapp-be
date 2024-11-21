@@ -30,8 +30,8 @@ func RandomString(n int) string {
 	return sb.String()
 }
 
-// Generates an username
-func RandomUsername() string {
+// Generates an owner name
+func RandomOwner() string {
 	return RandomString(6)
 }
 
