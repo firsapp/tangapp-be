@@ -62,3 +62,26 @@ func TestGetEventByUser(t *testing.T) {
 	}
 
 }
+
+func TestUpdateEvent(t *testing.T) {
+	user := GenerateUser(t)
+	event := GenerateEvent(t, user)
+	arg := UpdateEventParams{
+		ID:          event.ID,
+		Title:       NullString(utils.RandomString(10)),
+		Description: NullString(utils.RandomString(10)),
+		Status:      "Gagal",
+		TotalAmount: utils.RandomInt(1000, 10000),
+		DateEvent:   NullTime(time.Now()),
+	}
+
+	payload, err := testQueries.UpdateEvent(context.Background(), arg)
+
+	require.NoError(t, err)
+	require.NotEmpty(t, payload)
+
+	require.Equal(t, arg.Title, payload.Title)
+	require.Equal(t, arg.Description, payload.Description)
+	require.Equal(t, arg.Status, payload.Status)
+	require.Equal(t, arg.TotalAmount, payload.TotalAmount)
+}
