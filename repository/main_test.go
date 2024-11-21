@@ -5,7 +5,9 @@ import (
 	"log"
 	"os"
 	"tangapp-be/config"
+	"tangapp-be/utils"
 	"testing"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -13,9 +15,17 @@ import (
 var testDB *sql.DB
 var testQueries *Queries
 
+func NullString(ns string) sql.NullString {
+	return utils.ToNullString(ns)
+}
+
+func NullTime(nt time.Time) sql.NullTime {
+	return utils.ToNullTime(nt)
+}
+
 func TestMain(m *testing.M) {
 	// Init DB
-	config, err := config.LoadConfig("../..")
+	config, err := config.LoadConfig("../")
 	if err != nil {
 		log.Fatal(err)
 	}
