@@ -17,7 +17,8 @@ CREATE TABLE "events" (
   "created_by" uuid NOT NULL,
   "can_edit" bool NOT NULL DEFAULT true,
   "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP),
-  "updated_at" timestamp DEFAULT (CURRENT_TIMESTAMP)
+  "updated_at" timestamp DEFAULT (CURRENT_TIMESTAMP),
+  "is_active" bool NOT NULL DEFAULT true
 );
 
 CREATE TABLE "event_purchase_details" (
@@ -44,7 +45,7 @@ CREATE TABLE "event_member_details" (
 CREATE TABLE "payment_history" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "event_member_details_id" uuid NOT NULL,
-  "to_user_id" uuid NOT NULL,
+  "to_user_id" uuid NOT NULL ,
   "nominal" int NOT NULL,
   "description" text,
   "created_at" timestamp NOT NULL
