@@ -24,7 +24,7 @@ INSERT INTO events (
 ) VALUES (
   $1, $2, $3, $4, $5, $6, $7
 )
-RETURNING id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at
+RETURNING id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at, is_active
 `
 
 type AddEventParams struct {
@@ -59,12 +59,45 @@ func (q *Queries) AddEvent(ctx context.Context, arg AddEventParams) (Event, erro
 		&i.CanEdit,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IsActive,
+	)
+	return i, err
+}
+
+const deleteEvent = `-- name: DeleteEvent :one
+UPDATE events
+SET 
+  is_active = $2
+WHERE id = $1 AND can_edit = true
+RETURNING id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at, is_active
+`
+
+type DeleteEventParams struct {
+	ID       uuid.UUID `json:"id"`
+	IsActive bool      `json:"is_active"`
+}
+
+func (q *Queries) DeleteEvent(ctx context.Context, arg DeleteEventParams) (Event, error) {
+	row := q.db.QueryRowContext(ctx, deleteEvent, arg.ID, arg.IsActive)
+	var i Event
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Description,
+		&i.Status,
+		&i.TotalAmount,
+		&i.DateEvent,
+		&i.CreatedBy,
+		&i.CanEdit,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.IsActive,
 	)
 	return i, err
 }
 
 const getEvent = `-- name: GetEvent :one
-SELECT id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at FROM events
+SELECT id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at, is_active FROM events
 WHERE id = $1 LIMIT 1
 `
 
@@ -82,12 +115,13 @@ func (q *Queries) GetEvent(ctx context.Context, id uuid.UUID) (Event, error) {
 		&i.CanEdit,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IsActive,
 	)
 	return i, err
 }
 
 const getEventByUser = `-- name: GetEventByUser :many
-SELECT id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at FROM events
+SELECT id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at, is_active FROM events
 WHERE created_by = $1
 `
 
@@ -111,6 +145,7 @@ func (q *Queries) GetEventByUser(ctx context.Context, createdBy uuid.UUID) ([]Ev
 			&i.CanEdit,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.IsActive,
 		); err != nil {
 			return nil, err
 		}
@@ -134,7 +169,7 @@ SET
   total_amount = $5,
   date_event = $6
 WHERE id = $1 AND can_edit = true
-RETURNING id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at
+RETURNING id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at, is_active
 `
 
 type UpdateEventParams struct {
@@ -167,6 +202,7 @@ func (q *Queries) UpdateEvent(ctx context.Context, arg UpdateEventParams) (Event
 		&i.CanEdit,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.IsActive,
 	)
 	return i, err
 }

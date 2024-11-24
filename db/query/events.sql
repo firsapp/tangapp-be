@@ -30,3 +30,10 @@ SET
   date_event = $6
 WHERE id = $1 AND can_edit = true
 RETURNING *;
+
+-- name: DeleteEvent :one
+UPDATE events
+SET 
+  is_active = $2
+WHERE id = $1 AND can_edit = true
+RETURNING *;

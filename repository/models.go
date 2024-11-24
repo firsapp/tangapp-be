@@ -22,6 +22,7 @@ type Event struct {
 	CanEdit     bool           `json:"can_edit"`
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   sql.NullTime   `json:"updated_at"`
+	IsActive    bool           `json:"is_active"`
 }
 
 type EventMemberDetail struct {
