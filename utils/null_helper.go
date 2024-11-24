@@ -22,6 +22,13 @@ func FromNullString(ns sql.NullString) string {
 	return ""
 }
 
+func ToNullInt32(i int32) sql.NullInt32 {
+	return sql.NullInt32{
+		Int32: i,
+		Valid: true,
+	}
+}
+
 // Converts time.Time into sql.NullTime
 func ToNullTime(time time.Time) sql.NullTime {
 	return sql.NullTime{

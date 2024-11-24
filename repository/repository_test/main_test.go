@@ -24,6 +24,10 @@ func NullTime(nt time.Time) sql.NullTime {
 	return utils.ToNullTime(nt)
 }
 
+func NullInt32(i int32) sql.NullInt32 {
+	return utils.ToNullInt32(i)
+}
+
 func TestMain(m *testing.M) {
 	// Init DB
 	config, err := config.LoadConfig("../../")
