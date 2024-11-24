@@ -11,6 +11,7 @@ import (
 )
 
 func GenerateEvent(t *testing.T, user User) Event {
+
 	arg := AddEventParams{
 		CreatedBy:   user.ID,
 		Title:       sql.NullString{String: utils.RandomString(8), Valid: true},

@@ -25,7 +25,7 @@ func NullTime(nt time.Time) sql.NullTime {
 
 func TestMain(m *testing.M) {
 	// Init DB
-	config, err := config.LoadConfig("../")
+	config, err := config.LoadConfig("../../")
 	if err != nil {
 		log.Fatal(err)
 	}
