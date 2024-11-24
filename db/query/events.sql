@@ -14,11 +14,11 @@ RETURNING *;
 
 -- name: GetEvent :one
 SELECT * FROM events
-WHERE id = $1 LIMIT 1;
+WHERE id = $1 AND is_active = true LIMIT 1;
 
--- name: GetEventByUser :many
+-- name: ListEventByUser :many
 SELECT * FROM events
-WHERE created_by = $1;
+WHERE created_by = $1 AND is_active = true;
 
 -- name: UpdateEvent :one
 UPDATE events
@@ -28,7 +28,7 @@ SET
   status = $4,
   total_amount = $5,
   date_event = $6
-WHERE id = $1 AND can_edit = true
+WHERE id = $1 AND can_edit = true AND is_active = true
 RETURNING *;
 
 -- name: DeleteEvent :one

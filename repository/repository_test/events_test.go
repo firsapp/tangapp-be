@@ -34,6 +34,7 @@ func GenerateEvent(t *testing.T, user repository.User) repository.Event {
 	require.Equal(t, arg.Status, payload.Status)
 	require.Equal(t, arg.TotalAmount, payload.TotalAmount)
 	require.Equal(t, arg.CanEdit, payload.CanEdit)
+	require.True(t, payload.IsActive)
 
 	return payload
 }
@@ -44,13 +45,13 @@ func TestAddEvent(t *testing.T) {
 
 }
 
-func TestGetEventByUser(t *testing.T) {
+func TestListEventByUser(t *testing.T) {
 	user := GenerateUser(t)
 	for i := 0; i < 5; i++ {
 
 		event := GenerateEvent(t, user)
 
-		payload, err := testQueries.GetEventByUser(context.Background(), user.ID)
+		payload, err := testQueries.ListEventByUser(context.Background(), user.ID)
 
 		require.NoError(t, err)
 		require.NotEmpty(t, payload)
@@ -61,6 +62,7 @@ func TestGetEventByUser(t *testing.T) {
 		require.Equal(t, event.Status, payload[i].Status)
 		require.Equal(t, event.TotalAmount, payload[i].TotalAmount)
 		require.Equal(t, event.CanEdit, payload[i].CanEdit)
+		require.True(t, payload[i].IsActive)
 	}
 
 }
@@ -86,4 +88,19 @@ func TestUpdateEvent(t *testing.T) {
 	require.Equal(t, arg.Description, payload.Description)
 	require.Equal(t, arg.Status, payload.Status)
 	require.Equal(t, arg.TotalAmount, payload.TotalAmount)
+}
+
+func TestDeleteEvent(t *testing.T) {
+	user := GenerateUser(t)
+	event := GenerateEvent(t, user)
+	arg := repository.DeleteEventParams{
+		ID:       event.ID,
+		IsActive: false,
+	}
+
+	payload, err := testQueries.DeleteEvent(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, payload)
+
+	require.False(t, arg.IsActive)
 }

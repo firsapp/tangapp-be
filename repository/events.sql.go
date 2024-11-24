@@ -98,7 +98,7 @@ func (q *Queries) DeleteEvent(ctx context.Context, arg DeleteEventParams) (Event
 
 const getEvent = `-- name: GetEvent :one
 SELECT id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at, is_active FROM events
-WHERE id = $1 LIMIT 1
+WHERE id = $1 AND is_active = true LIMIT 1
 `
 
 func (q *Queries) GetEvent(ctx context.Context, id uuid.UUID) (Event, error) {
@@ -120,13 +120,13 @@ func (q *Queries) GetEvent(ctx context.Context, id uuid.UUID) (Event, error) {
 	return i, err
 }
 
-const getEventByUser = `-- name: GetEventByUser :many
+const listEventByUser = `-- name: ListEventByUser :many
 SELECT id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at, is_active FROM events
-WHERE created_by = $1
+WHERE created_by = $1 AND is_active = true
 `
 
-func (q *Queries) GetEventByUser(ctx context.Context, createdBy uuid.UUID) ([]Event, error) {
-	rows, err := q.db.QueryContext(ctx, getEventByUser, createdBy)
+func (q *Queries) ListEventByUser(ctx context.Context, createdBy uuid.UUID) ([]Event, error) {
+	rows, err := q.db.QueryContext(ctx, listEventByUser, createdBy)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +168,7 @@ SET
   status = $4,
   total_amount = $5,
   date_event = $6
-WHERE id = $1 AND can_edit = true
+WHERE id = $1 AND can_edit = true AND is_active = true
 RETURNING id, title, description, status, total_amount, date_event, created_by, can_edit, created_at, updated_at, is_active
 `
 
