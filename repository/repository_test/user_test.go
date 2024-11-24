@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"tangapp-be/repository"
 	"tangapp-be/utils"
 	"testing"
 	"time"
@@ -10,10 +11,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func GenerateUser(t *testing.T) User {
+func GenerateUser(t *testing.T) repository.User {
 	// Arrange
 	username := utils.RandomUsername()
-	arg := AddUserParams{
+	arg := repository.AddUserParams{
 		Username: sql.NullString{String: username, Valid: true},
 		Email:    username + "@gmail.com",
 	}
@@ -48,7 +49,7 @@ func TestGetUser(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	user := GenerateUser(t)
 	newUsername := utils.RandomUsername()
-	arg := UpdateUserParams{
+	arg := repository.UpdateUserParams{
 		ID:       user.ID,
 		Username: sql.NullString{String: newUsername, Valid: true},
 	}

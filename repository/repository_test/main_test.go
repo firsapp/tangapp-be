@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"tangapp-be/config"
+	"tangapp-be/repository"
 	"tangapp-be/utils"
 	"testing"
 	"time"
@@ -13,7 +14,7 @@ import (
 )
 
 var testDB *sql.DB
-var testQueries *Queries
+var testQueries *repository.Queries
 
 func NullString(ns string) sql.NullString {
 	return utils.ToNullString(ns)
@@ -37,7 +38,7 @@ func TestMain(m *testing.M) {
 	defer testDB.Close()
 
 	// Initialize `testQueries` with the `testDB` connection
-	testQueries = New(testDB)
+	testQueries = repository.New(testDB)
 
 	// Run tests
 	code := m.Run()
