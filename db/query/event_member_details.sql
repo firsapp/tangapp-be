@@ -1,4 +1,4 @@
--- name: AddMemberDetails :one
+-- name: AddMemberDetail :one
 INSERT INTO event_member_details
 (event_id, user_id, bill, paid, compensation, notes, done)
 VALUES(
@@ -6,7 +6,7 @@ VALUES(
 )
 RETURNING *;
 
--- name: GetMemberDetails :one
+-- name: GetMemberDetail :one
 SELECT 
   id, 
   event_id, 
@@ -19,7 +19,7 @@ SELECT
 FROM event_member_details
 WHERE id=$1;
 
--- name: ListMemberDetails :many
+-- name: ListMemberDetail :many
 SELECT 
   id, 
   event_id, 
@@ -32,7 +32,7 @@ SELECT
 FROM event_member_details
 WHERE event_id=$1;
 
--- name: UpdateMemberDetails :one
+-- name: UpdateMemberDetail :one
 UPDATE event_member_details 
 SET 
   bill = $2, 

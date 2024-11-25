@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const addMemberDetails = `-- name: AddMemberDetails :one
+const addMemberDetail = `-- name: AddMemberDetail :one
 INSERT INTO event_member_details
 (event_id, user_id, bill, paid, compensation, notes, done)
 VALUES(
@@ -21,7 +21,7 @@ VALUES(
 RETURNING id, event_id, user_id, bill, paid, compensation, notes, done
 `
 
-type AddMemberDetailsParams struct {
+type AddMemberDetailParams struct {
 	EventID      uuid.UUID      `json:"event_id"`
 	UserID       uuid.UUID      `json:"user_id"`
 	Bill         sql.NullInt32  `json:"bill"`
@@ -31,8 +31,8 @@ type AddMemberDetailsParams struct {
 	Done         bool           `json:"done"`
 }
 
-func (q *Queries) AddMemberDetails(ctx context.Context, arg AddMemberDetailsParams) (EventMemberDetail, error) {
-	row := q.db.QueryRowContext(ctx, addMemberDetails,
+func (q *Queries) AddMemberDetail(ctx context.Context, arg AddMemberDetailParams) (EventMemberDetail, error) {
+	row := q.db.QueryRowContext(ctx, addMemberDetail,
 		arg.EventID,
 		arg.UserID,
 		arg.Bill,
@@ -55,7 +55,7 @@ func (q *Queries) AddMemberDetails(ctx context.Context, arg AddMemberDetailsPara
 	return i, err
 }
 
-const getMemberDetails = `-- name: GetMemberDetails :one
+const getMemberDetail = `-- name: GetMemberDetail :one
 SELECT 
   id, 
   event_id, 
@@ -69,8 +69,8 @@ FROM event_member_details
 WHERE id=$1
 `
 
-func (q *Queries) GetMemberDetails(ctx context.Context, id uuid.UUID) (EventMemberDetail, error) {
-	row := q.db.QueryRowContext(ctx, getMemberDetails, id)
+func (q *Queries) GetMemberDetail(ctx context.Context, id uuid.UUID) (EventMemberDetail, error) {
+	row := q.db.QueryRowContext(ctx, getMemberDetail, id)
 	var i EventMemberDetail
 	err := row.Scan(
 		&i.ID,
@@ -85,7 +85,7 @@ func (q *Queries) GetMemberDetails(ctx context.Context, id uuid.UUID) (EventMemb
 	return i, err
 }
 
-const listMemberDetails = `-- name: ListMemberDetails :many
+const listMemberDetail = `-- name: ListMemberDetail :many
 SELECT 
   id, 
   event_id, 
@@ -99,8 +99,8 @@ FROM event_member_details
 WHERE event_id=$1
 `
 
-func (q *Queries) ListMemberDetails(ctx context.Context, eventID uuid.UUID) ([]EventMemberDetail, error) {
-	rows, err := q.db.QueryContext(ctx, listMemberDetails, eventID)
+func (q *Queries) ListMemberDetail(ctx context.Context, eventID uuid.UUID) ([]EventMemberDetail, error) {
+	rows, err := q.db.QueryContext(ctx, listMemberDetail, eventID)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +131,7 @@ func (q *Queries) ListMemberDetails(ctx context.Context, eventID uuid.UUID) ([]E
 	return items, nil
 }
 
-const updateMemberDetails = `-- name: UpdateMemberDetails :one
+const updateMemberDetail = `-- name: UpdateMemberDetail :one
 UPDATE event_member_details 
 SET 
   bill = $2, 
@@ -143,7 +143,7 @@ WHERE id = $1
 RETURNING id, event_id, user_id, bill, paid, compensation, notes, done
 `
 
-type UpdateMemberDetailsParams struct {
+type UpdateMemberDetailParams struct {
 	ID           uuid.UUID      `json:"id"`
 	Bill         sql.NullInt32  `json:"bill"`
 	Paid         sql.NullInt32  `json:"paid"`
@@ -152,8 +152,8 @@ type UpdateMemberDetailsParams struct {
 	Done         bool           `json:"done"`
 }
 
-func (q *Queries) UpdateMemberDetails(ctx context.Context, arg UpdateMemberDetailsParams) (EventMemberDetail, error) {
-	row := q.db.QueryRowContext(ctx, updateMemberDetails,
+func (q *Queries) UpdateMemberDetail(ctx context.Context, arg UpdateMemberDetailParams) (EventMemberDetail, error) {
+	row := q.db.QueryRowContext(ctx, updateMemberDetail,
 		arg.ID,
 		arg.Bill,
 		arg.Paid,
