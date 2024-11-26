@@ -21,6 +21,7 @@ func GenerateMemberDetail(t *testing.T, user repository.User, event repository.E
 	}
 
 	payload, err := testQueries.AddMemberDetail(context.Background(), arg)
+
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
 
@@ -48,6 +49,7 @@ func TestGetMemberDetail(t *testing.T) {
 	memberDetail := GenerateMemberDetail(t, user, event)
 
 	payload, err := testQueries.GetMemberDetail(context.Background(), memberDetail.ID)
+
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
 
@@ -62,6 +64,7 @@ func TestListMemberDetails(t *testing.T) {
 		memberDetail := GenerateMemberDetail(t, user, event)
 
 		payload, err := testQueries.ListMemberDetail(context.Background(), event.ID)
+
 		require.NoError(t, err)
 		require.NotEmpty(t, payload)
 
@@ -90,6 +93,7 @@ func TestUpdateMemberDetail(t *testing.T) {
 	}
 
 	payload, err := testQueries.UpdateMemberDetail(context.Background(), arg)
+
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
 
