@@ -45,10 +45,11 @@ CREATE TABLE "event_member_details" (
 CREATE TABLE "payment_history" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "event_member_details_id" uuid NOT NULL,
+  "from_user_id" uuid NOT NULL ,
   "to_user_id" uuid NOT NULL ,
   "nominal" int NOT NULL,
   "description" text,
-  "created_at" timestamp NOT NULL
+  "created_at" timestamp NOT NULL DEFAULT (CURRENT_TIMESTAMP)
 );
 
 ALTER TABLE "event_member_details" ADD FOREIGN KEY ("event_id") REFERENCES "events" ("id");
@@ -58,6 +59,8 @@ ALTER TABLE "event_purchase_details" ADD FOREIGN KEY ("event_id") REFERENCES "ev
 ALTER TABLE "payment_history" ADD FOREIGN KEY ("event_member_details_id") REFERENCES "event_member_details" ("id");
 
 ALTER TABLE "payment_history" ADD FOREIGN KEY ("to_user_id") REFERENCES "users" ("id");
+
+ALTER TABLE "payment_history" ADD FOREIGN KEY ("from_user_id") REFERENCES "users" ("id");
 
 ALTER TABLE "event_member_details" ADD FOREIGN KEY ("user_id") REFERENCES "users" ("id");
 

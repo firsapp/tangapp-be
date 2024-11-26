@@ -49,6 +49,7 @@ type EventPurchaseDetail struct {
 type PaymentHistory struct {
 	ID                   uuid.UUID      `json:"id"`
 	EventMemberDetailsID uuid.UUID      `json:"event_member_details_id"`
+	FromUserID           uuid.UUID      `json:"from_user_id"`
 	ToUserID             uuid.UUID      `json:"to_user_id"`
 	Nominal              int32          `json:"nominal"`
 	Description          sql.NullString `json:"description"`
