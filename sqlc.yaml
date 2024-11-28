@@ -1,17 +1,72 @@
 version: '2'
 
 sql:
-  - engine: 'postgresql'
+  - name: 'users'
+    engine: 'postgresql'
     schema: 'db/migration'
-    queries: 'db/query'
-    # Change to your desired output directory and package name
-    # This example assumes you want generated Go code in `db/sqlc` with package name `sqlc`
+    queries: 'db/query/users.sql'
     gen:
       go:
-        out: 'repository'
         package: 'repository'
+        out: 'modules/users/repository'
         emit_json_tags: true # Adds JSON tags to struct fields
         emit_prepared_queries: false # Generates prepared statements for queries
         emit_interface: false # Generates interface types for each query
         emit_exact_table_names: false # Keeps table names exactly as they are in the database
         emit_empty_slices: true
+
+  - name: 'events'
+    engine: 'postgresql'
+    schema: 'db/migration'
+    queries: 'db/query/events.sql'
+    gen:
+      go:
+        package: 'repository'
+        out: 'modules/events/repository'
+        emit_json_tags: true # Adds JSON tags to struct fields
+        emit_prepared_queries: false # Generates prepared statements for queries
+        emit_interface: false # Generates interface types for each query
+        emit_exact_table_names: false # Keeps table names exactly as they are in the database
+        emit_empty_slices: true
+
+  - name: 'event member details'
+    engine: 'postgresql'
+    schema: 'db/migration'
+    queries: 'db/query/event_member_details.sql'
+    gen:
+      go:
+        package: 'repository'
+        out: 'modules/event_member_details/repository'
+        emit_json_tags: true # Adds JSON tags to struct fields
+        emit_prepared_queries: false # Generates prepared statements for queries
+        emit_interface: false # Generates interface types for each query
+        emit_exact_table_names: false # Keeps table names exactly as they are in the database
+        emit_empty_slices: true
+
+  - name: 'payment histories'
+    engine: 'postgresql'
+    schema: 'db/migration'
+    queries: 'db/query/payment_histories.sql'
+    gen:
+      go:
+        package: 'repository'
+        out: 'modules/payment_histories/repository'
+        emit_json_tags: true # Adds JSON tags to struct fields
+        emit_prepared_queries: false # Generates prepared statements for queries
+        emit_interface: false # Generates interface types for each query
+        emit_exact_table_names: false # Keeps table names exactly as they are in the database
+        emit_empty_slices: true
+# UPCOMING Purchase details
+# - name: 'events'
+#   engine: 'postgresql'
+#   schema: 'db/migration'
+#   queries: 'db/query/events.sql'
+#   gen:
+#     go:
+#       package: 'repository'
+#       out: 'modules/events/repository'
+#       emit_json_tags: true # Adds JSON tags to struct fields
+#       emit_prepared_queries: false # Generates prepared statements for queries
+#       emit_interface: false # Generates interface types for each query
+#       emit_exact_table_names: false # Keeps table names exactly as they are in the database
+#       emit_empty_slices: true
