@@ -1,4 +1,4 @@
-package controllers
+package controller
 
 import (
 	"net/http"
@@ -9,11 +9,11 @@ import (
 	"github.com/markbates/goth/gothic"
 )
 
-func GoogleAuthHandler(c *gin.Context) {
+func (h *AuthController) GoogleAuthHandler(c *gin.Context) {
 	gothic.BeginAuthHandler(c.Writer, c.Request) // Starts authentication process
 }
 
-func GoogleAuthCallback(c *gin.Context) {
+func (h *AuthController) GoogleAuthCallback(c *gin.Context) {
 	user, err := gothic.CompleteUserAuth(c.Writer, c.Request) // Completes user auth
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.ErrorResponse(err))
