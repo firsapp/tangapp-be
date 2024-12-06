@@ -1,8 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"tangapp-be/config"
+	"tangapp-be/modules/users/controller"
+	"tangapp-be/modules/users/repository"
+	"tangapp-be/modules/users/router"
+	"tangapp-be/modules/users/service"
 
 	authController "tangapp-be/pkg/auth/controller"
 	authRepository "tangapp-be/pkg/auth/repository"
@@ -26,11 +31,23 @@ func main() {
 	config.LoadOauthConfig(configuration)
 	r := gin.Default() // Gin router
 
-	// routes.SetupRoutes(r)
+	//Experimental - database
+	connString := configuration.DBCredential
+	db, err := pgxpool.Connect(context.Background(), connString)
+	if err != nil {
+		log.Fatal("kenot konek db")
+	}
 
+	// auth
 	authRepo := authRepository.NewAuth(cfg.DB)
 	authSvc := authService.NewAuth(authRepo)
 	authController.NewAuthController(authSvc).Register(r)
+
+	// users
+	userRepo := repository.NewUserRepository(db)
+	userService := service.NewUserService(userRepo)
+	userController := controller.NewUserController(userService)
+	router.RegisterUserRoutes(r, userController)
 
 	r.Run(config.BaseUrl)
 
