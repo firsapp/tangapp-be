@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"os"
@@ -10,10 +11,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	_ "github.com/lib/pq"
 )
 
-var testDB *sql.DB
+var testDB *pgxpool.Pool
 var testQueries *repository.Queries
 
 func NullString(ns string) sql.NullString {
@@ -35,7 +37,11 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
-	testDB, err = sql.Open("postgres", config.DBCredential)
+	// Use DB connection string from the environment variable
+	connString := config.DBCredential // DB_CREDENTIAL should be a PostgreSQL URI
+
+	// Initialize a connection pool to the database
+	testDB, err = pgxpool.Connect(context.Background(), connString)
 	if err != nil {
 		log.Fatalf("Could not connect to test database: %v", err)
 	}
