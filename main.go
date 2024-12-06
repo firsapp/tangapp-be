@@ -32,6 +32,13 @@ func init() {
 		log.Fatal(err)
 	}
 	config.LoadOauthConfig(configuration)
+
+	//Experimental - database
+	connString := configuration.DBCredential
+	cfg.DB, err = pgxpool.Connect(context.Background(), connString)
+	if err != nil {
+		log.Fatal("kenot konek db")
+	}
 }
 
 // Intiates http server
@@ -39,20 +46,13 @@ func main() {
 
 	r := gin.Default() // Gin router
 
-	//Experimental - database
-	connString := configuration.DBCredential
-	db, err := pgxpool.Connect(context.Background(), connString)
-	if err != nil {
-		log.Fatal("kenot konek db")
-	}
-
 	// auth
 	authRepo := authRepository.NewAuth(cfg.DB)
 	authSvc := authService.NewAuth(authRepo)
 	authController.NewAuthController(authSvc).Register(r)
 
 	// users
-	userRepo := repository.NewUserRepository(db)
+	userRepo := repository.NewUserRepository(cfg.DB)
 	userService := service.NewUserService(userRepo)
 	userController := controller.NewUserController(userService)
 	router.RegisterUserRoutes(r, userController)
