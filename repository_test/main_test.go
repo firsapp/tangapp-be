@@ -30,7 +30,7 @@ func NullInt32(i int32) sql.NullInt32 {
 
 func TestMain(m *testing.M) {
 	// Init DB
-	config, err := config.LoadConfig("../../")
+	config, err := config.LoadConfig("../")
 	if err != nil {
 		log.Fatal(err)
 	}
