@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"tangapp-be/config"
-	"tangapp-be/routes"
 
 	authController "tangapp-be/pkg/auth/controller"
 	authRepository "tangapp-be/pkg/auth/repository"
@@ -27,7 +26,7 @@ func main() {
 	config.LoadOauthConfig(configuration)
 	r := gin.Default() // Gin router
 
-	routes.SetupRoutes(r)
+	// routes.SetupRoutes(r)
 
 	authRepo := authRepository.NewAuth(cfg.DB)
 	authSvc := authService.NewAuth(authRepo)
