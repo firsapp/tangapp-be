@@ -23,7 +23,7 @@ func (h *AuthController) Register(r *gin.Engine) {
 
 	auth := r.Group("/v1/auth")
 
-	auth.GET("/auth/:provider", h.GoogleAuthHandler)
-	auth.GET("/auth/:provider/callback", h.GoogleAuthCallback)
+	auth.GET("/:provider", h.GoogleAuthHandler)
+	auth.GET("/:provider/callback", h.GoogleAuthCallback)
 
 }

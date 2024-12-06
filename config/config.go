@@ -8,7 +8,7 @@ import (
 
 var (
 	JWTSecret []byte
-	BaseUrl   = "127.0.0.1:7878"
+	BaseUrl   = "localhost:7878"
 )
 
 type Config struct {

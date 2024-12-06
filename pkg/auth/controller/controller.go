@@ -10,6 +10,9 @@ import (
 )
 
 func (h *AuthController) GoogleAuthHandler(c *gin.Context) {
+	gothic.GetProviderName = func(req *http.Request) (string, error) {
+		return c.Param("provider"), nil // Specify the provider (e.g., Google)
+	}
 	gothic.BeginAuthHandler(c.Writer, c.Request) // Starts authentication process
 }
 
@@ -32,5 +35,4 @@ func (h *AuthController) GoogleAuthCallback(c *gin.Context) {
 	// Redirect to frontend with token as a query parameter
 	frontendCallbackURL := "http://localhost:5173/auth-callback" // Adjust as needed
 	c.Redirect(http.StatusFound, frontendCallbackURL+"?token="+token)
-
 }

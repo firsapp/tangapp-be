@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/providers/google"
@@ -10,18 +9,20 @@ import (
 
 // LoadOauthConfig used for generate google oauth config
 func LoadOauthConfig(config Config) {
-	callbackUri := fmt.Sprintf("%s/auth/google/callback", BaseUrl)
+	callbackUrl := fmt.Sprintf("http://%s/v1/auth/google/callback", BaseUrl)
 
-	config, err := LoadConfig("../..") // ../.. means "go to parent folder"
+	config, err := LoadConfig("../") // ../.. means "go to parent folder"
 	if err != nil {
-		log.Fatal("oauth : can't load configuration files")
+		println("unable to load configuration file")
 	}
 
 	goth.UseProviders(
 		google.New(
 			config.GoogleClientID,
 			config.GoogleClientSecret,
-			callbackUri, "email", "profile",
+			callbackUrl, "email", "profile",
 		),
 	)
+
+	println("Google OAuth provider initialized with callback:", callbackUrl)
 }
