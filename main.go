@@ -17,14 +17,22 @@ type Config struct {
 	DB *pgxpool.Pool
 }
 
-// Intiates http server
-func main() {
-	cfg := new(Config)
+var (
+	cfg *Config
+)
+
+func init() {
+	cfg = new(Config)
 	configuration, err := config.LoadConfig(".") // Load configs
 	if err != nil {
 		log.Fatal(err)
 	}
 	config.LoadOauthConfig(configuration)
+}
+
+// Intiates http server
+func main() {
+
 	r := gin.Default() // Gin router
 
 	routes.SetupRoutes(r)
