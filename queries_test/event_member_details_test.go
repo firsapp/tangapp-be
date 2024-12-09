@@ -1,16 +1,16 @@
-package repository
+package queries
 
 import (
 	"context"
-	"tangapp-be/repository"
+	"tangapp-be/queries"
 	"tangapp-be/utils"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-func GenerateMemberDetail(t *testing.T, user repository.User, event repository.Event) repository.EventMemberDetail {
-	arg := repository.AddMemberDetailParams{
+func GenerateMemberDetail(t *testing.T, user queries.User, event queries.Event) queries.EventMemberDetail {
+	arg := queries.AddMemberDetailParams{
 		EventID:      event.ID,
 		UserID:       user.ID,
 		Bill:         NullInt32(utils.RandomInt(1000, 10000)),
@@ -83,7 +83,7 @@ func TestUpdateMemberDetail(t *testing.T) {
 	user := GenerateUser(t)
 	event := GenerateEvent(t, user)
 	memberDetail := GenerateMemberDetail(t, user, event)
-	arg := repository.UpdateMemberDetailParams{
+	arg := queries.UpdateMemberDetailParams{
 		ID:           memberDetail.ID,
 		Bill:         utils.ToNullInt32(utils.RandomInt(1000, 10000)),
 		Paid:         utils.ToNullInt32(utils.RandomInt(1000, 10000)),

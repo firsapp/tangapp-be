@@ -1,18 +1,18 @@
-package repository
+package queries
 
 import (
 	"context"
 	"fmt"
-	"tangapp-be/repository"
+	"tangapp-be/queries"
 	"tangapp-be/utils"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
-func GeneratePaymentHistory(t *testing.T, fromUser repository.User, toUser repository.User, event repository.Event) repository.PaymentHistory {
+func GeneratePaymentHistory(t *testing.T, fromUser queries.User, toUser queries.User, event queries.Event) queries.PaymentHistory {
 	eventMember := GenerateMemberDetail(t, fromUser, event)
-	arg := repository.AddPaymentHistoryParams{
+	arg := queries.AddPaymentHistoryParams{
 		EventMemberDetailsID: eventMember.ID,
 		FromUserID:           fromUser.ID,
 		ToUserID:             toUser.ID,
@@ -71,7 +71,7 @@ func TestListPaymentHistoryByUser(t *testing.T) {
 	for i := 0; i < 5; i++ {
 		fromUser := GenerateUser(t)
 		ph := GeneratePaymentHistory(t, fromUser, toUser, event)
-		arg := repository.ListPaymentHistoryByUserParams{
+		arg := queries.ListPaymentHistoryByUserParams{
 			ToUserID: toUser.ID,
 		}
 
@@ -96,7 +96,7 @@ func TestListPaymentHistoryByUser2(t *testing.T) {
 		toUser := GenerateUser(t)
 		event := GenerateEvent(t, toUser)
 		ph := GeneratePaymentHistory(t, fromUser, toUser, event)
-		arg := repository.ListPaymentHistoryByUserParams{
+		arg := queries.ListPaymentHistoryByUserParams{
 			FromUserID: fromUser.ID,
 		}
 
@@ -120,7 +120,7 @@ func TestUpdatePaymentHistory(t *testing.T) {
 	toUser2 := GenerateUser(t)
 	event := GenerateEvent(t, toUser)
 	ph := GeneratePaymentHistory(t, fromUser, toUser, event)
-	arg := repository.UpdatePaymentHistoryParams{
+	arg := queries.UpdatePaymentHistoryParams{
 		ID:                   ph.ID,
 		EventMemberDetailsID: ph.EventMemberDetailsID,
 		ToUserID:             toUser2.ID,
