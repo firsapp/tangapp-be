@@ -3,7 +3,9 @@ module tangapp-be
 go 1.22.4
 
 require (
+	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/google/uuid v1.4.0
+	github.com/jackc/pgconn v1.14.3
 	github.com/jackc/pgx/v4 v4.18.3
 	github.com/lib/pq v1.10.2
 	github.com/markbates/goth v1.80.0
@@ -28,7 +30,6 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
-	github.com/jackc/pgconn v1.14.3 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgproto3/v2 v2.3.3 // indirect
