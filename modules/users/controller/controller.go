@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"tangapp-be/errors"
 	"tangapp-be/modules/users/service"
+	"tangapp-be/queries"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -20,10 +21,19 @@ func NewUserController(userService *service.UserService) *UserController {
 }
 
 type UserResponse struct {
-	ID        uuid.UUID
+	ID        string
 	Username  string
 	Email     string
 	CreatedAt time.Time
+}
+
+func NewUserResponse(user *queries.User) UserResponse {
+	return UserResponse{
+		ID:        user.ID.String(),
+		Username:  user.Username.String,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt,
+	}
 }
 
 func (uc *UserController) CreateUser(c *gin.Context) {
@@ -73,12 +83,6 @@ func (uc *UserController) GetUserByID(c *gin.Context) {
 		return
 	}
 
-	res := UserResponse{
-		ID:        user.ID,
-		Username:  user.Username.String, //Assert directly to .String aja lah
-		Email:     user.Email,
-		CreatedAt: user.CreatedAt,
-	}
-
+	res := NewUserResponse(&user)
 	c.JSON(http.StatusOK, res)
 }
