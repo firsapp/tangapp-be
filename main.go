@@ -47,8 +47,8 @@ func main() {
 	r := gin.Default() // Gin router
 
 	// auth
-	authRepo := authRepository.NewAuth(cfg.DB)
-	authSvc := authService.NewAuth(authRepo)
+	authRepo := authRepository.NewAuthRepository(cfg.DB)
+	authSvc := authService.NewAuthService(authRepo)
 	authController.NewAuthController(authSvc).Register(r)
 
 	// users
