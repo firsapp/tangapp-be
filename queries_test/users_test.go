@@ -35,10 +35,21 @@ func TestAddUser(t *testing.T) {
 	GenerateUser(t)
 }
 
-func TestGetUser(t *testing.T) {
+func TestGetUserByID(t *testing.T) {
 	user := GenerateUser(t)
 
-	payload, err := testQueries.GetUser(context.Background(), user.ID)
+	payload, err := testQueries.GetUserByID(context.Background(), user.ID)
+
+	require.NoError(t, err)
+	require.NotEmpty(t, payload)
+	require.Equal(t, user, payload) // Haha langsung compare struct haha
+
+}
+
+func TestGetUserByEmail(t *testing.T) {
+	user := GenerateUser(t)
+
+	payload, err := testQueries.GetUserByEmail(context.Background(), user.Email)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
