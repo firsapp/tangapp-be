@@ -1,8 +1,10 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 	"tangapp-be/config"
+	"tangapp-be/queries"
 	"tangapp-be/utils"
 
 	"github.com/gin-gonic/gin"
@@ -16,20 +18,48 @@ func (h *AuthController) GoogleAuthHandler(c *gin.Context) {
 	gothic.BeginAuthHandler(c.Writer, c.Request) // Starts authentication process
 }
 
-func (h *AuthController) GoogleAuthCallback(c *gin.Context) {
-	user, err := gothic.CompleteUserAuth(c.Writer, c.Request) // Completes user auth
+func (ac *AuthController) GoogleAuthCallback(c *gin.Context) {
+	oauth, err := gothic.CompleteUserAuth(c.Writer, c.Request) // Completes user auth
 	if err != nil {
 		c.JSON(http.StatusBadRequest, utils.ErrorResponse(err))
 		return
 	}
 
 	// Check if user exists
-
-	// Generate JWT
-	token, err := utils.GenerateJWT(user.UserID, user.Email, user.Name, config.JWTSecret)
+	user, exists, err := ac.authSvc.ValidateUserByEmail(c, oauth.Email)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not generate token"})
+		log.Print(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate user"})
 		return
+	}
+
+	// If user exists, Generate JWT
+	var token string
+	if exists {
+		token, err = utils.GenerateJWT(user.ID.String(), user.Email, user.Username.String, config.JWTSecret)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "could not generate token"})
+			return
+		}
+	} else {
+		// If user does not exist, add user to database
+		newUser, err := ac.authSvc.AddNewUser(c,
+			queries.AddUserParams{
+				Username: utils.ToNullString(oauth.Name),
+				Email:    oauth.Email,
+			})
+		if err != nil {
+			log.Print(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
+			return
+		}
+
+		// Then, create the JWT
+		token, err = utils.GenerateJWT(newUser.ID.String(), newUser.Email, newUser.Username.String, config.JWTSecret)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "could not generate token"})
+			return
+		}
 	}
 
 	// Redirect to frontend with token as a query parameter
