@@ -54,7 +54,9 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	res := NewUserResponse(&user)
+
+	c.JSON(http.StatusOK, res)
 }
 
 func (uc *UserController) GetUserByID(c *gin.Context) {

@@ -37,7 +37,7 @@ func (r *UserRepository) AddUser(ctx context.Context, username, email string) (q
 
 // Gets a user by id (gak tau uuid.UUID bener atau enggak)
 func (r *UserRepository) GetUserByID(ctx context.Context, ID uuid.UUID) (queries.User, error) {
-	user, err := r.q.GetUser(ctx, ID)
+	user, err := r.q.GetUserByID(ctx, ID)
 	// TO-DO : Convert nullable payload into string
 	if err != nil {
 		if err == pgx.ErrNoRows {

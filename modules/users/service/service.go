@@ -2,13 +2,11 @@ package service
 
 import (
 	"context"
-	"log"
 	"tangapp-be/errors"
 	"tangapp-be/modules/users/repository"
 	"tangapp-be/queries"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx"
 )
 
 type UserService struct {
@@ -36,10 +34,8 @@ func (s *UserService) GetUserByID(ctx context.Context, ID uuid.UUID) (queries.Us
 
 	user, err := s.r.GetUserByID(ctx, ID)
 	if err != nil {
-		log.Printf("Error type: %T", err) // Add this to check the error type
-		if err == pgx.ErrNoRows {
-			// User not found
-			return queries.User{}, &errors.UserNotFoundError{ID: ID}
+		if _, ok := err.(*errors.UserNotFoundError); ok { // Error validation
+			return queries.User{}, err
 		}
 		return queries.User{}, err
 	}
