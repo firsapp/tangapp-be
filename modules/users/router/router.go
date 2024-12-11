@@ -11,5 +11,6 @@ func RegisterUserRoutes(r *gin.Engine, userController *controller.UserController
 	{
 		users.POST("/", userController.CreateUser)
 		users.GET("/", userController.GetUserByID)
+		users.PATCH("/", userController.UpdateUser)
 	}
 }

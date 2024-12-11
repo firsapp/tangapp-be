@@ -3,7 +3,7 @@ package controller
 import (
 	"log"
 	"net/http"
-	"tangapp-be/errors"
+	"tangapp-be/errorx"
 	"tangapp-be/modules/users/service"
 	"tangapp-be/queries"
 	"time"
@@ -75,7 +75,7 @@ func (uc *UserController) GetUserByID(c *gin.Context) {
 		log.Printf("Error type in controller: %T", err)
 
 		switch e := err.(type) {
-		case *errors.UserNotFoundError:
+		case *errorx.UserNotFoundError:
 			// If user not found, return not found error
 			c.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
 		default:
@@ -87,4 +87,36 @@ func (uc *UserController) GetUserByID(c *gin.Context) {
 
 	res := NewUserResponse(&user)
 	c.JSON(http.StatusOK, res)
+}
+
+func (uc *UserController) UpdateUser(c *gin.Context) {
+	var req struct {
+		ID       string `json:"id" binding:"required,uuid"`
+		Username string `json:"username" binding:"required,alphanum"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data", "details": err.Error()})
+		return
+	}
+
+	_, err := uc.userService.UpdateUser(c, req.ID, req.Username)
+	if err != nil {
+		log.Printf("Error type in controller: %T", err)
+
+		switch e := err.(type) {
+		case *errorx.UserNotFoundError:
+			c.JSON(http.StatusNotFound, gin.H{"error": e.Error()})
+		case *errorx.DatabaseError:
+			c.JSON(http.StatusNotFound, gin.H{"Database error": e.Error()})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Unexpected error", "details": e.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "username updated successfully",
+	})
+
 }
