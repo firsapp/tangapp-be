@@ -1,4 +1,4 @@
-package errors
+package errorx
 
 import (
 	"fmt"
@@ -13,4 +13,13 @@ type UserNotFoundError struct {
 
 func (e *UserNotFoundError) Error() string {
 	return fmt.Sprintf("User with ID %s not found", e.ID)
+}
+
+// Custom error for Database issues
+type DatabaseError struct {
+	Err error
+}
+
+func (e *DatabaseError) Error() string {
+	return fmt.Sprintf("Database error: %v", e.Err)
 }
