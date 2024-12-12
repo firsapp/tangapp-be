@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"tangapp-be/errorx"
+	"tangapp-be/modules/users/repository"
 	"tangapp-be/modules/users/service"
 	"tangapp-be/queries"
 	"time"
@@ -47,7 +48,10 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := uc.userService.CreateUser(c, req.Username, req.Email)
+	user, err := uc.userService.CreateUser(c, repository.UserPayload{
+		Username: req.Username,
+		Email:    req.Email,
+	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -100,7 +104,10 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	_, err := uc.userService.UpdateUser(c, req.ID, req.Username)
+	_, err := uc.userService.UpdateUser(c, repository.UserPayload{
+		ID:       req.ID,
+		Username: req.Username,
+	})
 	if err != nil {
 		log.Printf("Error type in controller: %T", err)
 

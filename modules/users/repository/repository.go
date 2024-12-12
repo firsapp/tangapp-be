@@ -2,11 +2,11 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"tangapp-be/errorx"
 	"tangapp-be/queries"
+	"tangapp-be/utils"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgconn"
@@ -26,14 +26,19 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 	}
 }
 
-// Adds a new user to the database
-func (r *UserRepository) AddUser(ctx context.Context, username, email string) (queries.User, error) {
-	arg := queries.AddUserParams{
-		Username: sql.NullString{String: username, Valid: true},
-		Email:    email,
-	}
+type UserPayload struct {
+	ID       string
+	Username string
+	Email    string
+}
 
-	user, err := r.q.AddUser(ctx, arg)
+// Adds a new user to the database
+func (r *UserRepository) AddUser(ctx context.Context, arg UserPayload) (queries.User, error) {
+
+	user, err := r.q.AddUser(ctx, queries.AddUserParams{
+		Username: utils.ToNullString(arg.Username),
+		Email:    arg.Email,
+	})
 	if err != nil {
 		return queries.User{}, err
 	}
@@ -56,8 +61,11 @@ func (r *UserRepository) GetUserByID(ctx context.Context, ID string) (queries.Us
 	return user, nil
 }
 
-func (r *UserRepository) UpdateUser(ctx context.Context, arg queries.UpdateUserParams) (queries.User, error) {
-	user, err := r.q.UpdateUser(ctx, arg)
+func (r *UserRepository) UpdateUser(ctx context.Context, arg UserPayload) (queries.User, error) {
+	user, err := r.q.UpdateUser(ctx, queries.UpdateUserParams{
+		ID:       uuid.MustParse(arg.ID),
+		Username: utils.ToNullString(arg.Username),
+	})
 	if err != nil {
 		fmt.Println(err)
 		// Check if the error came from PostgreSQL-specific (pgconn.PgError)
