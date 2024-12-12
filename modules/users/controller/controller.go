@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 type UserController struct {
@@ -61,12 +60,13 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 
 func (uc *UserController) GetUserByID(c *gin.Context) {
 	var req struct {
-		ID uuid.UUID `json:"id" binding:"required,uuid"`
+		ID string `form:"id" binding:"required"`
 	}
 
 	// validasi request
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data", "details": err.Error()})
+	if err := c.ShouldBindQuery(&req); err != nil {
+		log.Printf("Error binding query: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid query parameter", "details": err.Error()})
 		return
 	}
 

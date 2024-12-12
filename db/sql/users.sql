@@ -19,4 +19,4 @@ WHERE email = $1 LIMIT 1;
 UPDATE users
 SET username = $2
 WHERE id = $1
-RETURNING *;
+RETURNING username;

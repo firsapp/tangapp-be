@@ -41,13 +41,14 @@ func (r *UserRepository) AddUser(ctx context.Context, username, email string) (q
 }
 
 // Gets a user by id (gak tau uuid.UUID bener atau enggak)
-func (r *UserRepository) GetUserByID(ctx context.Context, ID uuid.UUID) (queries.User, error) {
-	user, err := r.q.GetUserByID(ctx, ID)
+func (r *UserRepository) GetUserByID(ctx context.Context, ID string) (queries.User, error) {
+	id := uuid.MustParse(ID)
+	user, err := r.q.GetUserByID(ctx, id)
 	// TO-DO : Convert nullable payload into string
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			// User not found
-			return queries.User{}, &errorx.UserNotFoundError{ID: ID}
+			return queries.User{}, &errorx.UserNotFoundError{ID: id}
 		}
 		return queries.User{}, err
 	}

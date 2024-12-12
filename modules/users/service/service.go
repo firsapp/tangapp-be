@@ -31,7 +31,7 @@ func (s *UserService) CreateUser(ctx context.Context, username, email string) (q
 	return user, nil
 }
 
-func (s *UserService) GetUserByID(ctx context.Context, ID uuid.UUID) (queries.User, error) {
+func (s *UserService) GetUserByID(ctx context.Context, ID string) (queries.User, error) {
 
 	user, err := s.r.GetUserByID(ctx, ID)
 	if err != nil {
