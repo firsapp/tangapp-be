@@ -6,7 +6,6 @@ import (
 	"log"
 	"tangapp-be/config"
 	"tangapp-be/pkg/auth/repository"
-	"tangapp-be/queries"
 	"tangapp-be/utils"
 
 	"github.com/markbates/goth"
@@ -43,8 +42,8 @@ func (s *authService) GoogleAuthCallbackHandler(ctx context.Context, arg goth.Us
 	} else {
 		// If user does not exist, add user to database
 		newUser, err := s.repo.AddNewUser(ctx,
-			queries.AddUserParams{
-				Username: utils.ToNullString(arg.Name),
+			repository.AddNewUserPayload{
+				Username: arg.Name,
 				Email:    arg.Email,
 			})
 		if err != nil {

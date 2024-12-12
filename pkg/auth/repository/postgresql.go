@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"tangapp-be/queries"
+	"tangapp-be/utils"
 
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -12,7 +13,7 @@ import (
 // Harusnya disini kocak, bukan di service wleeeek
 type AuthRepository interface {
 	ValidateUserByEmail(ctx context.Context, email string) (queries.User, bool, error)
-	AddNewUser(ctx context.Context, user queries.AddUserParams) (queries.User, error)
+	AddNewUser(ctx context.Context, arg AddNewUserPayload) (queries.User, error)
 }
 
 type authRepository struct {
@@ -38,8 +39,16 @@ func (a *authRepository) ValidateUserByEmail(ctx context.Context, email string) 
 	return user, true, nil
 }
 
-func (a *authRepository) AddNewUser(ctx context.Context, arg queries.AddUserParams) (queries.User, error) {
-	user, err := a.q.AddUser(ctx, arg)
+type AddNewUserPayload struct {
+	Username string
+	Email    string
+}
+
+func (a *authRepository) AddNewUser(ctx context.Context, arg AddNewUserPayload) (queries.User, error) {
+	user, err := a.q.AddUser(ctx, queries.AddUserParams{
+		Username: utils.ToNullString(arg.Username),
+		Email:    arg.Email,
+	})
 	if err != nil {
 		return queries.User{}, fmt.Errorf("database error while adding new user: %w", err)
 	}
