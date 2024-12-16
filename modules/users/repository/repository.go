@@ -42,6 +42,7 @@ func (r *UserRepository) AddUser(ctx context.Context, arg UserPayload) (queries.
 	if err != nil {
 		return queries.User{}, err
 	}
+
 	return user, nil
 }
 
@@ -61,7 +62,7 @@ func (r *UserRepository) GetUserByID(ctx context.Context, ID string) (queries.Us
 	return user, nil
 }
 
-func (r *UserRepository) UpdateUser(ctx context.Context, arg UserPayload) (queries.User, error) {
+func (r *UserRepository) UpdateUser(ctx context.Context, arg UserPayload) (string, error) {
 	user, err := r.q.UpdateUser(ctx, queries.UpdateUserParams{
 		ID:       uuid.MustParse(arg.ID),
 		Username: utils.ToNullString(arg.Username),
@@ -70,12 +71,12 @@ func (r *UserRepository) UpdateUser(ctx context.Context, arg UserPayload) (queri
 		fmt.Println(err)
 		// Check if the error came from PostgreSQL-specific (pgconn.PgError)
 		if errors.As(err, &pgErr) {
-			return queries.User{}, &errorx.DatabaseError{
+			return "", &errorx.DatabaseError{
 				Err: fmt.Errorf("PostgreSQL error: %s (Code: %s, Detail: %s)", pgErr.Message, pgErr.Code, pgErr.Detail),
 			}
 		}
-
-		return queries.User{}, fmt.Errorf("unexpected error: %w", err)
+		return "", fmt.Errorf("unexpected error: %w", err)
 	}
-	return user, nil
+
+	return user.String, nil
 }

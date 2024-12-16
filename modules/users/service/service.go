@@ -15,7 +15,6 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 	return &UserService{r: repo}
 }
 
-// Handles user creation logic
 func (s *UserService) CreateUser(ctx context.Context, arg repository.UserPayload) (queries.User, error) {
 
 	// Business lojig
@@ -40,13 +39,13 @@ func (s *UserService) GetUserByID(ctx context.Context, ID string) (queries.User,
 	return user, nil
 }
 
-func (s *UserService) UpdateUser(ctx context.Context, arg repository.UserPayload) (queries.User, error) {
+func (s *UserService) UpdateUser(ctx context.Context, arg repository.UserPayload) (string, error) {
 	user, err := s.r.UpdateUser(ctx, arg)
 	if err != nil {
 		if _, ok := err.(*errorx.DatabaseError); ok {
-			return queries.User{}, err
+			return "", err
 		}
-		return queries.User{}, err
+		return "", err
 	}
 	return user, nil
 }
