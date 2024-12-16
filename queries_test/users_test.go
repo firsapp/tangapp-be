@@ -6,7 +6,6 @@ import (
 	"tangapp-be/queries"
 	"tangapp-be/utils"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -69,10 +68,7 @@ func TestUpdateUser(t *testing.T) {
 
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
-	require.Equal(t, user.ID, payload.ID)
-	require.Equal(t, sql.NullString{String: newUsername, Valid: true}, payload.Username)
-	require.Equal(t, user.Email, payload.Email)
-	require.WithinDuration(t, user.CreatedAt, payload.CreatedAt, time.Second)
+	require.Equal(t, sql.NullString{String: newUsername, Valid: true}, payload)
 }
 
 // Generates an username

@@ -77,7 +77,7 @@ const updateUser = `-- name: UpdateUser :one
 UPDATE users
 SET username = $2
 WHERE id = $1
-RETURNING id, username, email, created_at
+RETURNING username
 `
 
 type UpdateUserParams struct {
@@ -85,14 +85,9 @@ type UpdateUserParams struct {
 	Username sql.NullString `json:"username"`
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (sql.NullString, error) {
 	row := q.db.QueryRow(ctx, updateUser, arg.ID, arg.Username)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Username,
-		&i.Email,
-		&i.CreatedAt,
-	)
-	return i, err
+	var username sql.NullString
+	err := row.Scan(&username)
+	return username, err
 }
