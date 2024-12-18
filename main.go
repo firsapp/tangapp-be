@@ -9,6 +9,11 @@ import (
 	"tangapp-be/modules/users/router"
 	"tangapp-be/modules/users/service"
 
+	eventController "tangapp-be/modules/events/controller"
+	eventRepository "tangapp-be/modules/events/repository"
+	eventRouter "tangapp-be/modules/events/router"
+	eventService "tangapp-be/modules/events/service"
+
 	authController "tangapp-be/pkg/auth/controller"
 	authRepository "tangapp-be/pkg/auth/repository"
 	authService "tangapp-be/pkg/auth/service"
@@ -56,6 +61,12 @@ func main() {
 	userService := service.NewUserService(userRepo)
 	userController := controller.NewUserController(userService)
 	router.RegisterUserRoutes(r, userController)
+
+	// events
+	eventRepo := eventRepository.NewEventRepository(cfg.DB)
+	eventService := eventService.NewEventService(eventRepo)
+	eventController := eventController.NewEventController(eventService)
+	eventRouter.RegisterEventRoutes(r, eventController)
 
 	r.Run(config.BaseUrl)
 
