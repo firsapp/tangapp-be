@@ -9,9 +9,9 @@ import (
 	"tangapp-be/modules/users/router"
 	"tangapp-be/modules/users/service"
 
-	authController "tangapp-be/pkg/auth/controller"
-	authRepository "tangapp-be/pkg/auth/repository"
-	authService "tangapp-be/pkg/auth/service"
+	authController "tangapp-be/modules/auth/controller"
+	authRepository "tangapp-be/modules/auth/repository"
+	authService "tangapp-be/modules/auth/service"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v4/pgxpool"
