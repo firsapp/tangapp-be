@@ -1,9 +1,9 @@
-package repository
+package queries
 
 import (
 	"context"
 	"database/sql"
-	"tangapp-be/repository"
+	"tangapp-be/queries"
 	"tangapp-be/utils"
 	"testing"
 	"time"
@@ -11,9 +11,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func GenerateEvent(t *testing.T, user repository.User) repository.Event {
+func GenerateEvent(t *testing.T, user queries.User) queries.Event {
 
-	arg := repository.AddEventParams{
+	arg := queries.AddEventParams{
 		CreatedBy:   user.ID,
 		Title:       sql.NullString{String: utils.RandomString(8), Valid: true},
 		Description: sql.NullString{String: utils.RandomString(8), Valid: true},
@@ -70,7 +70,7 @@ func TestListEventByUser(t *testing.T) {
 func TestUpdateEvent(t *testing.T) {
 	user := GenerateUser(t)
 	event := GenerateEvent(t, user)
-	arg := repository.UpdateEventParams{
+	arg := queries.UpdateEventParams{
 		ID:          event.ID,
 		Title:       NullString(utils.RandomString(10)),
 		Description: NullString(utils.RandomString(10)),
@@ -93,7 +93,7 @@ func TestUpdateEvent(t *testing.T) {
 func TestDeleteEvent(t *testing.T) {
 	user := GenerateUser(t)
 	event := GenerateEvent(t, user)
-	arg := repository.DeleteEventParams{
+	arg := queries.DeleteEventParams{
 		ID:       event.ID,
 		IsActive: false,
 	}

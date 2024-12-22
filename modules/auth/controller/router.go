@@ -1,18 +1,18 @@
 package controller
 
-import "github.com/gin-gonic/gin"
+import (
+	"tangapp-be/pkg/auth/service"
 
-// AuthService defines a contract for the handlers to be implemented.
-type AuthService interface {
-}
+	"github.com/gin-gonic/gin"
+)
 
 // AuthController defines a handler with the required dependencies.
 type AuthController struct {
-	authSvc AuthService
+	authSvc service.AuthService
 }
 
 // NewAuthController returns an instance of TodoHandler.
-func NewAuthController(authSvc AuthService) *AuthController {
+func NewAuthController(authSvc service.AuthService) *AuthController {
 	return &AuthController{
 		authSvc: authSvc,
 	}

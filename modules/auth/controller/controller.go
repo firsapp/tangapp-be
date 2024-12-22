@@ -2,37 +2,32 @@ package controller
 
 import (
 	"net/http"
-	"tangapp-be/config"
 	"tangapp-be/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/markbates/goth/gothic"
 )
 
-func (h *AuthController) GoogleAuthHandler(c *gin.Context) {
+func (h *AuthController) GoogleAuthHandler(ctx *gin.Context) {
 	gothic.GetProviderName = func(req *http.Request) (string, error) {
-		return c.Param("provider"), nil // Specify the provider (e.g., Google)
+		return ctx.Param("provider"), nil // Specify the provider (e.g., Google)
 	}
-	gothic.BeginAuthHandler(c.Writer, c.Request) // Starts authentication process
+	gothic.BeginAuthHandler(ctx.Writer, ctx.Request) // Starts authentication process
 }
 
-func (h *AuthController) GoogleAuthCallback(c *gin.Context) {
-	user, err := gothic.CompleteUserAuth(c.Writer, c.Request) // Completes user auth
+func (ac *AuthController) GoogleAuthCallback(ctx *gin.Context) {
+	oauth, err := gothic.CompleteUserAuth(ctx.Writer, ctx.Request) // Completes user auth
 	if err != nil {
-		c.JSON(http.StatusBadRequest, utils.ErrorResponse(err))
+		ctx.JSON(http.StatusBadRequest, utils.ErrorResponse(err))
 		return
 	}
 
-	// Check if user exists
-
-	// Generate JWT
-	token, err := utils.GenerateJWT(user.UserID, user.Email, user.Name, config.JWTSecret)
+	token, err := ac.authSvc.GoogleAuthCallbackHandler(ctx, oauth)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not generate token"})
-		return
+		ctx.JSON(http.StatusBadRequest, utils.ErrorResponse(err))
 	}
 
 	// Redirect to frontend with token as a query parameter
 	frontendCallbackURL := "http://localhost:5173/auth-callback" // Adjust as needed
-	c.Redirect(http.StatusFound, frontendCallbackURL+"?token="+token)
+	ctx.Redirect(http.StatusFound, frontendCallbackURL+"?token="+token)
 }

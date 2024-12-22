@@ -9,9 +9,20 @@ import (
 	"tangapp-be/modules/users/router"
 	"tangapp-be/modules/users/service"
 
+<<<<<<< HEAD
 	authController "tangapp-be/modules/auth/controller"
 	authRepository "tangapp-be/modules/auth/repository"
 	authService "tangapp-be/modules/auth/service"
+=======
+	eventController "tangapp-be/modules/events/controller"
+	eventRepository "tangapp-be/modules/events/repository"
+	eventRouter "tangapp-be/modules/events/router"
+	eventService "tangapp-be/modules/events/service"
+
+	authController "tangapp-be/pkg/auth/controller"
+	authRepository "tangapp-be/pkg/auth/repository"
+	authService "tangapp-be/pkg/auth/service"
+>>>>>>> 6e76341784d11d1552c5b6418e4ee92c1e49fdb5
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -47,8 +58,8 @@ func main() {
 	r := gin.Default() // Gin router
 
 	// auth
-	authRepo := authRepository.NewAuth(cfg.DB)
-	authSvc := authService.NewAuth(authRepo)
+	authRepo := authRepository.NewAuthRepository(cfg.DB)
+	authSvc := authService.NewAuthService(authRepo)
 	authController.NewAuthController(authSvc).Register(r)
 
 	// users
@@ -56,6 +67,12 @@ func main() {
 	userService := service.NewUserService(userRepo)
 	userController := controller.NewUserController(userService)
 	router.RegisterUserRoutes(r, userController)
+
+	// events
+	eventRepo := eventRepository.NewEventRepository(cfg.DB)
+	eventService := eventService.NewEventService(eventRepo)
+	eventController := eventController.NewEventController(eventService)
+	eventRouter.RegisterEventRoutes(r, eventController)
 
 	r.Run(config.BaseUrl)
 

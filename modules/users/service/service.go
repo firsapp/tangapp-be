@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
+	"tangapp-be/errorx"
 	"tangapp-be/modules/users/repository"
-	query "tangapp-be/repository"
+	"tangapp-be/queries"
 )
 
 type UserService struct {
@@ -14,14 +15,37 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 	return &UserService{r: repo}
 }
 
-// Handles user creation logic
-func (s *UserService) CreateUser(ctx context.Context, username, email string) (query.User, error) {
+func (s *UserService) CreateUser(ctx context.Context, arg repository.UserPayload) (queries.User, error) {
 
 	// Business lojig
 
-	user, err := s.r.AddUser(ctx, username, email)
+	user, err := s.r.AddUser(ctx, arg)
 	if err != nil {
-		return query.User{}, err
+		return queries.User{}, err
+	}
+
+	return user, nil
+}
+
+func (s *UserService) GetUserByID(ctx context.Context, ID string) (queries.User, error) {
+
+	user, err := s.r.GetUserByID(ctx, ID)
+	if err != nil {
+		if _, ok := err.(*errorx.UserNotFoundError); ok { // Error validation
+			return queries.User{}, err
+		}
+		return queries.User{}, err
+	}
+	return user, nil
+}
+
+func (s *UserService) UpdateUser(ctx context.Context, arg repository.UserPayload) (string, error) {
+	user, err := s.r.UpdateUser(ctx, arg)
+	if err != nil {
+		if _, ok := err.(*errorx.DatabaseError); ok {
+			return "", err
+		}
+		return "", err
 	}
 	return user, nil
 }

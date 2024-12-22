@@ -1,4 +1,4 @@
-package repository
+package queries
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 	"tangapp-be/config"
-	"tangapp-be/repository"
+	"tangapp-be/queries"
 	"tangapp-be/utils"
 	"testing"
 	"time"
@@ -16,7 +16,7 @@ import (
 )
 
 var testDB *pgxpool.Pool
-var testQueries *repository.Queries
+var testQueries *queries.Queries
 
 func NullString(ns string) sql.NullString {
 	return utils.ToNullString(ns)
@@ -48,7 +48,7 @@ func TestMain(m *testing.M) {
 	defer testDB.Close()
 
 	// Initialize `testQueries` with the `testDB` connection
-	testQueries = repository.New(testDB)
+	testQueries = queries.New(testDB)
 
 	// Run tests
 	code := m.Run()

@@ -1,21 +1,56 @@
-package postgresql
+package repository
 
 import (
-	"tangapp-be/repository"
+	"context"
+	"fmt"
+	"tangapp-be/queries"
+	"tangapp-be/utils"
 
+	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-// Auth defines a postgres repository with the required dependencies.
-type Auth struct {
-	conn *pgxpool.Pool
-	q    *repository.Queries
+// Harusnya disini kocak, bukan di service wleeeek
+type AuthRepository interface {
+	ValidateUserByEmail(ctx context.Context, email string) (queries.User, bool, error)
+	AddNewUser(ctx context.Context, arg AddNewUserPayload) (queries.User, error)
 }
 
-// NewAuth returns an instance of Todo repository.
-func NewAuth(conn *pgxpool.Pool) *Auth {
-	return &Auth{
-		conn: conn,
-		q:    repository.New(conn),
+type authRepository struct {
+	db *pgxpool.Pool
+	q  *queries.Queries
+}
+
+func NewAuthRepository(db *pgxpool.Pool) AuthRepository {
+	return &authRepository{
+		db: db,
+		q:  queries.New(db),
 	}
+}
+
+func (a *authRepository) ValidateUserByEmail(ctx context.Context, email string) (queries.User, bool, error) {
+	user, err := a.q.GetUserByEmail(ctx, email)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return queries.User{}, false, nil // User does not exist
+		}
+		return queries.User{}, false, fmt.Errorf("database error while validating user by email: %w", err)
+	}
+	return user, true, nil
+}
+
+type AddNewUserPayload struct {
+	Username string
+	Email    string
+}
+
+func (a *authRepository) AddNewUser(ctx context.Context, arg AddNewUserPayload) (queries.User, error) {
+	user, err := a.q.AddUser(ctx, queries.AddUserParams{
+		Username: utils.ToNullString(arg.Username),
+		Email:    arg.Email,
+	})
+	if err != nil {
+		return queries.User{}, fmt.Errorf("database error while adding new user: %w", err)
+	}
+	return user, nil
 }

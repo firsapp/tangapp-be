@@ -1,20 +1,19 @@
-package repository
+package queries
 
 import (
 	"context"
 	"database/sql"
-	"tangapp-be/repository"
+	"tangapp-be/queries"
 	"tangapp-be/utils"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
 )
 
-func GenerateUser(t *testing.T) repository.User {
+func GenerateUser(t *testing.T) queries.User {
 	// Arrange
 	username := utils.RandomUsername()
-	arg := repository.AddUserParams{
+	arg := queries.AddUserParams{
 		Username: sql.NullString{String: username, Valid: true},
 		Email:    username + "@gmail.com",
 	}
@@ -35,10 +34,21 @@ func TestAddUser(t *testing.T) {
 	GenerateUser(t)
 }
 
-func TestGetUser(t *testing.T) {
+func TestGetUserByID(t *testing.T) {
 	user := GenerateUser(t)
 
-	payload, err := testQueries.GetUser(context.Background(), user.ID)
+	payload, err := testQueries.GetUserByID(context.Background(), user.ID)
+
+	require.NoError(t, err)
+	require.NotEmpty(t, payload)
+	require.Equal(t, user, payload) // Haha langsung compare struct haha
+
+}
+
+func TestGetUserByEmail(t *testing.T) {
+	user := GenerateUser(t)
+
+	payload, err := testQueries.GetUserByEmail(context.Background(), user.Email)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
@@ -49,7 +59,7 @@ func TestGetUser(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	user := GenerateUser(t)
 	newUsername := utils.RandomUsername()
-	arg := repository.UpdateUserParams{
+	arg := queries.UpdateUserParams{
 		ID:       user.ID,
 		Username: sql.NullString{String: newUsername, Valid: true},
 	}
@@ -58,10 +68,7 @@ func TestUpdateUser(t *testing.T) {
 
 	require.NoError(t, err)
 	require.NotEmpty(t, payload)
-	require.Equal(t, user.ID, payload.ID)
-	require.Equal(t, sql.NullString{String: newUsername, Valid: true}, payload.Username)
-	require.Equal(t, user.Email, payload.Email)
-	require.WithinDuration(t, user.CreatedAt, payload.CreatedAt, time.Second)
+	require.Equal(t, sql.NullString{String: newUsername, Valid: true}, payload)
 }
 
 // Generates an username

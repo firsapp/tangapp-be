@@ -10,5 +10,7 @@ func RegisterUserRoutes(r *gin.Engine, userController *controller.UserController
 	users := r.Group("/v1/users")
 	{
 		users.POST("/", userController.CreateUser)
+		users.GET("/", userController.GetUserByID)
+		users.PATCH("/", userController.UpdateUser)
 	}
 }
