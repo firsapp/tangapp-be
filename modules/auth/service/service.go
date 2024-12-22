@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"tangapp-be/config"
-	"tangapp-be/pkg/auth/repository"
+	"tangapp-be/modules/auth/repository"
 	"tangapp-be/utils"
 
 	"github.com/markbates/goth"

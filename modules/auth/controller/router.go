@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"tangapp-be/pkg/auth/service"
+	"tangapp-be/modules/auth/service"
 
 	"github.com/gin-gonic/gin"
 )

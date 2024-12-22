@@ -9,20 +9,13 @@ import (
 	"tangapp-be/modules/users/router"
 	"tangapp-be/modules/users/service"
 
-<<<<<<< HEAD
 	authController "tangapp-be/modules/auth/controller"
 	authRepository "tangapp-be/modules/auth/repository"
 	authService "tangapp-be/modules/auth/service"
-=======
 	eventController "tangapp-be/modules/events/controller"
 	eventRepository "tangapp-be/modules/events/repository"
 	eventRouter "tangapp-be/modules/events/router"
 	eventService "tangapp-be/modules/events/service"
-
-	authController "tangapp-be/pkg/auth/controller"
-	authRepository "tangapp-be/pkg/auth/repository"
-	authService "tangapp-be/pkg/auth/service"
->>>>>>> 6e76341784d11d1552c5b6418e4ee92c1e49fdb5
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v4/pgxpool"
