@@ -15,7 +15,7 @@ func NewEventService(repo *repository.EventRepository) *EventService {
 
 func (s *EventService) AddEvent(ctx context.Context, arg *repository.EventPayload, memberDetails *[]repository.EventMemberDetailPayload, purchaseDetails *[]repository.EventPurchaseDetailPayload) error {
 	// Start a transaction
-	tx, err := s.r.BeginTransaction(ctx)
+	tx, qtx, err := s.r.BeginTransaction(ctx)
 	if err != nil {
 		return err
 	}
@@ -26,7 +26,7 @@ func (s *EventService) AddEvent(ctx context.Context, arg *repository.EventPayloa
 	}()
 
 	// Create the event using transaction-bound queries
-	err = s.r.AddEvent(ctx, arg)
+	err = s.r.AddEvent(ctx, qtx, arg)
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,7 @@ func (s *EventService) AddEvent(ctx context.Context, arg *repository.EventPayloa
 	// If member details are provided, insert them
 	if len(*memberDetails) > 0 {
 		for _, member := range *memberDetails {
-			err = s.r.AddEventMemberDetail(ctx, &member)
+			err = s.r.AddEventMemberDetail(ctx, qtx, &member)
 			if err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (s *EventService) AddEvent(ctx context.Context, arg *repository.EventPayloa
 	// If purchase details are provided, insert them
 	if len(*purchaseDetails) > 0 {
 		for _, purchase := range *purchaseDetails {
-			err = s.r.AddEventPurchaseDetail(ctx, &purchase)
+			err = s.r.AddEventPurchaseDetail(ctx, qtx, &purchase)
 			if err != nil {
 				return err
 			}

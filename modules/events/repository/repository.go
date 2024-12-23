@@ -60,16 +60,18 @@ type EventPurchaseDetailPayload struct {
 }
 
 // Starts a transaction
-func (r *EventRepository) BeginTransaction(ctx context.Context) (*pgxpool.Tx, error) {
+func (r *EventRepository) BeginTransaction(ctx context.Context) (*pgxpool.Tx, *queries.Queries, error) {
 	tx, err := r.db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return tx.(*pgxpool.Tx), nil
+	qtx := r.q.WithTx(tx)
+
+	return tx.(*pgxpool.Tx), qtx, nil
 }
 
-func (r *EventRepository) AddEvent(ctx context.Context, arg *EventPayload) error {
-	_, err := r.q.AddEvent(ctx, queries.AddEventParams{
+func (r *EventRepository) AddEvent(ctx context.Context, qtx *queries.Queries, arg *EventPayload) error {
+	_, err := qtx.AddEvent(ctx, queries.AddEventParams{
 		CreatedBy:   uuid.MustParse(arg.CreatedBy),
 		Title:       utils.ToNullString(arg.Title),
 		Description: utils.ToNullString(arg.Description),
@@ -85,8 +87,8 @@ func (r *EventRepository) AddEvent(ctx context.Context, arg *EventPayload) error
 	return nil
 }
 
-func (r *EventRepository) AddEventPurchaseDetail(ctx context.Context, arg *EventPurchaseDetailPayload) error {
-	_, err := r.q.AddPurchaseDetail(ctx, queries.AddPurchaseDetailParams{
+func (r *EventRepository) AddEventPurchaseDetail(ctx context.Context, qtx *queries.Queries, arg *EventPurchaseDetailPayload) error {
+	_, err := qtx.AddPurchaseDetail(ctx, queries.AddPurchaseDetailParams{
 		EventID:    uuid.MustParse(arg.EventID),
 		Name:       arg.Name,
 		Qty:        arg.Qty,
@@ -100,8 +102,8 @@ func (r *EventRepository) AddEventPurchaseDetail(ctx context.Context, arg *Event
 	return nil
 }
 
-func (r *EventRepository) AddEventMemberDetail(ctx context.Context, arg *EventMemberDetailPayload) error {
-	_, err := r.q.AddMemberDetail(ctx, queries.AddMemberDetailParams{
+func (r *EventRepository) AddEventMemberDetail(ctx context.Context, qtx *queries.Queries, arg *EventMemberDetailPayload) error {
+	_, err := qtx.AddMemberDetail(ctx, queries.AddMemberDetailParams{
 		EventID:      uuid.MustParse(arg.EventID),
 		UserID:       uuid.MustParse(arg.UserID),
 		Bill:         utils.ToNullInt32(arg.Bill),
